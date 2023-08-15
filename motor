@@ -1,0 +1,56 @@
+const int en = 8;         // LOW: on, HIGH: off
+const int step = 5;       // HIGH > LOW: 1 step
+const int dir = 2;        // change direction
+const int pressSensor1 = A1;
+const int pressSensor2 = A2;
+
+int value1 = 0;
+int value2 = 0;
+boolean motorRunning = false;
+
+void setup() {
+  pinMode(en, OUTPUT);
+  pinMode(step, OUTPUT);
+  pinMode(dir, OUTPUT);
+  pinMode(pressSensor1, INPUT);
+  pinMode(pressSensor2, INPUT);
+  
+  digitalWrite(en, LOW);h
+  digitalWrite(step, LOW);
+  digitalWrite(dir, LOW);
+
+  Serial.begin(9600);
+  delay(1000);
+}
+
+void loop() {
+  value1 = analogRead(pressSensor1);
+  value2 = analogRead(pressSensor2);
+  
+  if (value1 >300 || value2 >300) {
+    if (value1 > value2) {
+      digitalWrite(dir,LOW);
+      motorRunning = true;
+      digitalWrite(step, HIGH);
+      delayMicroseconds(50);
+      digitalWrite(step, LOW);
+      delayMicroseconds(50);
+    }
+    else {
+      digitalWrite(dir,HIGH);
+      motorRunning = true;
+      digitalWrite(step, HIGH);
+      delayMicroseconds(50);
+      digitalWrite(step, LOW);
+      delayMicroseconds(50);
+    }
+  }
+  else if (value1 <= 10 && value2 <= 10) { // 압력센서 값이 0이면 모터 멈춤
+    digitalWrite(en, HIGH); // 모터 비활성화
+    motorRunning = false;
+  } else {
+    digitalWrite(en, LOW); // 압력센서 값이 0과 350 사이면 모터 정지 상태 유지
+  }
+  Serial.println(value1);
+  Serial.println(value2);
+}
